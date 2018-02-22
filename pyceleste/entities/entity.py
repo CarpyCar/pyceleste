@@ -15,20 +15,21 @@ def register_entity(*names):
     return decorator
 
 
-def create_entity(element):
+def create_entity(element, level):
     if element.tag in entities:
         entity_type = entities[element.tag]
     else:
         entity_type = Entity
-    return entity_type(element)
+    return entity_type(element, level)
 
 
 class Entity(object):
 
     atlas_dir = pathlib.Path('Graphics/Atlases/Gameplay')
 
-    def __init__(self, element):
+    def __init__(self, element, level):
         self.element = element
+        self.level = level
         self.tag = element.tag
 
     def render(self, im, x=0, y=0):

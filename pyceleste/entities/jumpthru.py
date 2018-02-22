@@ -5,8 +5,8 @@ from .entity import register_entity
 @register_entity('jumpThru')
 class JumpThru(Entity):
 
-    def __init__(self, element):
-        super().__init__(element)
+    def __init__(self, element, level):
+        super().__init__(element, level)
         self.id = int(element.get('id'))
         self.typ = element.get('type', 'default')
         self.x = int(element.get('x'))

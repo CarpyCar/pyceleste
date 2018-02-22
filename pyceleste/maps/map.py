@@ -32,7 +32,7 @@ class Level(object):
         entities = self.etree.find('entities')
         self.entities = []
         for entity in entities:
-            self.entities.append(create_entity(entity))
+            self.entities.append(create_entity(entity, self))
 
     def __repr__(self):
         return '<Level name={}>'.format(self.name)

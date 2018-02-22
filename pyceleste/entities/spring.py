@@ -5,8 +5,8 @@ from .entity import register_entity
 @register_entity('spring')
 class Spring(Entity):
 
-    def __init__(self, element):
-        super().__init__(element)
+    def __init__(self, element, level):
+        super().__init__(element, level)
         self.id = int(element.get('id'))
         self.x = int(element.get('x'))
         self.y = int(element.get('y'))

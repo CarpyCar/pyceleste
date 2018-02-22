@@ -7,8 +7,8 @@ from .entity import register_entity
 @register_entity('spikesUp', 'spikesDown', 'spikesLeft', 'spikesRight')
 class Spikes(Entity):
 
-    def __init__(self, element):
-        super().__init__(element)
+    def __init__(self, element, level):
+        super().__init__(element, level)
         self.id = int(element.get('id'))
         self.direction = self.tag[6:].lower()
         self.spike_type = element.get('type', 'default')
