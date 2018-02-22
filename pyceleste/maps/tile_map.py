@@ -22,6 +22,7 @@ class TileMap(object):
     def fill_map(self, string):
         """Fill this tilemap based on a tile string."""
         row, col = 0, 0
+        string = string.replace('\r\n', '\n')
         for char in string:
             if char == '\n':
                 for col in range(col, self.width):
