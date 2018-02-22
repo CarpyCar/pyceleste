@@ -1,6 +1,7 @@
 from PIL import ImageDraw
 from PIL import ImageFont
 
+from ..entities.entity import create_entity
 from .tile_map import TileMap
 from ..tiles import fg_tiles
 from ..tiles import bg_tiles
@@ -28,6 +29,10 @@ class Level(object):
             self.bg = TileMap(bg_str, bg_tiles, self.width // 8, self.height // 8)
         else:
             self.bg = None
+        entities = self.etree.find('entities')
+        self.entities = []
+        for entity in entities:
+            self.entities.append(create_entity(entity))
 
     def __repr__(self):
         return '<Level name={}>'.format(self.name)
@@ -36,7 +41,9 @@ class Level(object):
         if self.bg is not None:
             self.bg.render(im, x=x, y=y)
         self.solids.render(im, x=x, y=y)
+        for entity in self.entities:
+            entity.render(im, x=x, y=y)
         if draw_name:
             font = ImageFont.truetype('resources/munro/Munro.ttf', 10)
             draw = ImageDraw.Draw(im)
-            draw.text((2, 2), self.name[4:], font=font)
+            draw.text((x + 2, y + 2), self.name[4:], font=font)
