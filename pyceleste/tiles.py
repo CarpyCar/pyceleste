@@ -1,5 +1,5 @@
 import pathlib
-from xml.etree import ElementTree
+import lxml.etree as ElementTree
 
 from PIL import Image
 
@@ -15,9 +15,12 @@ class TileCollection(object):
     ForegroundTiles.xml).
     """
 
-    def __init__(self, path):
-        self.tree = ElementTree.parse(path)
+    def __init__(self):
         self.tilesets = {}
+
+    def load(self, path):
+        parser = ElementTree.XMLParser(remove_comments=True)
+        self.tree = ElementTree.parse(path, parser=parser)
         for tileset in self.tree.getroot():
             if 'copy' in tileset.attrib:
                 copy = self.tilesets[tileset.attrib['copy']]
@@ -28,6 +31,11 @@ class TileCollection(object):
 
     def __getitem__(self, id):
         return self.tilesets[id]
+
+
+# Create singletons
+fg_tiles = TileCollection()
+bg_tiles = TileCollection()
 
 
 class Tileset(object):

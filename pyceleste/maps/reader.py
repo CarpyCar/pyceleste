@@ -1,4 +1,7 @@
+from lxml import etree
+
 from ..io.reader import Reader
+from .map import Map
 
 
 class MapReader(Reader):
@@ -9,4 +12,4 @@ class MapReader(Reader):
         package = self.str()
         num_entries = self.int16()
         self.entries = [self.str() for _ in range(num_entries)]
-        return self.dict()[1]
+        return Map(etree.ElementTree(self.element()))

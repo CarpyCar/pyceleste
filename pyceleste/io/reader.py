@@ -1,5 +1,7 @@
 import struct
 
+from lxml import etree
+
 
 class Reader(object):
 
@@ -63,27 +65,21 @@ class Reader(object):
             result.extend([chr(value)] * count)
         return ''.join(result)
 
-    def dict(self):
-        result = {}
-        name = result['name'] = self.entry()
-        attributes = {}
+    def element(self):
+        name = self.entry()
+        element = etree.Element(name)
         num_attributes = self.uint8()
         for _ in range(num_attributes):
             attr_name = self.entry()
-            attr_value = self.value()
-            if attr_name in attributes:
-                raise ValueError('Duplicate key {}'.format(attr_name))
-            attributes[attr_name] = attr_value
-        result['attributes'] = attributes
+            attr_value = str(self.value())
+            if attr_name == 'innerText':
+                element.text = attr_value
+            else:
+                element.set(attr_name, attr_value)
         num_children = self.uint16()
-        children = {}
         for _ in range(num_children):
-            child_name, child = self.dict()
-            if child_name not in children:
-                children[child_name] = []
-            children[child_name].append(child)
-        result['children'] = children
-        return name, result
+            element.append(self.element())
+        return element
 
     def entry(self):
         key = self.uint16()
