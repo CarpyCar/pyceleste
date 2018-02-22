@@ -19,6 +19,12 @@ class TileMap(object):
         self.map[...] = '0'
         self.fill_map(string)
 
+    @staticmethod
+    def from_array(array, tiles, width, height):
+        tile_map = TileMap('', tiles, width, height)
+        tile_map.map = array.copy()
+        return tile_map
+
     def fill_map(self, string):
         """Fill this tilemap based on a tile string."""
         row, col = 0, 0
@@ -88,10 +94,14 @@ class TileMap(object):
         adj = '-'.join(row_strs)
         return adj
 
-    def render(self, image, x=0, y=0):
+    def render(self, image, x=0, y=0, window=None):
         """Render this TileMap onto a PIL Image at (x, y)."""
-        for row in range(self.height):
-            for col in range(self.width):
+        if window is None:
+            window = (0, 0, self.height, self.width)
+        window = (max(0, window[0]), max(0, window[1]),
+                  min(self.height, window[2]), min(self.width, window[3]))
+        for tile_y, row in enumerate(range(window[0], window[2])):
+            for tile_x, col in enumerate(range(window[1], window[3])):
                 if self[row, col] == '0':
                     continue
                 tileset = self.tiles[self[row, col]]
@@ -100,7 +110,13 @@ class TileMap(object):
                 if not candidates:
                     candidates = self.padding_or_center(row, col, tileset)
                 tile_box = tileset.get_box(random.choice(candidates))
-                dest = (col * self.TILE_SIZE, row * self.TILE_SIZE)
+                dest = (x + (tile_x * 8), y + (tile_y * 8))
                 image.alpha_composite(tileset.bitmap,
                                       dest=dest,
                                       source=tile_box)
+
+    def shadow(self, box, tileset_id):
+        """Return a copy of this tilemap with the provided box filled."""
+        new_map = self.map.copy()
+        new_map[box[0]:box[2], box[1]:box[3]] = tileset_id
+        return TileMap.from_array(new_map, self.tiles, self.width, self.height)
