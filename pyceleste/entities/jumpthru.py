@@ -26,14 +26,24 @@ class JumpThru(Entity):
         dest_y = y + self.y + meta_info['Y']
         width = meta_info['Width'] // 3
         count = self.size // width
-        # draw left edge
+        center_box = (8, 0, 16, 8)
+        # determine left side attachment
+        if self.level.solids[self.y // 8, (self.x // 8) - 1] == '0':
+            offset = 8
+        else:
+            offset = 0
         im.alpha_composite(bitmap, dest=(dest_x, dest_y),
-                           source=(0, 0, 8, 8))
+                           source=(0, 0 + offset, 8, 8 + offset))
         dest_x += width
         for _ in range(1, count - 1):
             im.alpha_composite(bitmap, dest=(dest_x, dest_y),
                                source=(8, 0, 16, 8))
             dest_x += width
+        # determine right side attachment
+        if self.level.solids[self.y // 8, (self.x + self.size) // 8] == '0':
+            offset = 8
+        else:
+            offset = 0
         im.alpha_composite(bitmap, dest=(dest_x, dest_y),
-                           source=(16, 0, 24, 8))
+                           source=(16, 0 + offset, 24, 8 + offset))
         
