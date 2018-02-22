@@ -1,8 +1,5 @@
 import random
 
-import yaml
-from PIL import Image
-
 from .entity import Entity
 from .entity import register_entity
 
@@ -28,18 +25,14 @@ class Spikes(Entity):
     def vertical(self):
         return self.direction == 'up' or self.direction == 'down'
 
-    def choose_bitmap(self):
+    def bitmap_path(self):
         bitmaps_dir = self.atlas_dir / 'danger' / 'spikes'
         glob_str = '{}_{}*.png'.format(self.spike_type, self.direction)
         candidates = list(bitmaps_dir.glob(glob_str))
-        return random.choice(candidates)
+        return random.choice(candidates).with_suffix('')
 
     def render(self, im, x=0, y=0):
-        bitmap_path = self.choose_bitmap()
-        bitmap = Image.open(bitmap_path)
-        meta_path = bitmap_path.with_suffix('.meta.yaml')
-        with open(meta_path, 'r') as f:
-            meta_info = yaml.load(f)
+        bitmap, meta_info = self.load_bitmap()
         width = meta_info['Width']
         height = meta_info['Height']
         dest_x = x + self.x + meta_info['X']

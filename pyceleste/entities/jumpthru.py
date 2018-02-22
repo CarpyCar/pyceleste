@@ -1,6 +1,3 @@
-import yaml
-from PIL import Image
-
 from .entity import Entity
 from .entity import register_entity
 
@@ -10,7 +7,6 @@ class JumpThru(Entity):
 
     def __init__(self, element):
         super().__init__(element)
-        print(self.element.attrib)
         self.id = int(element.get('id'))
         self.typ = element.get('type', 'default')
         self.x = int(element.get('x'))
@@ -19,18 +15,13 @@ class JumpThru(Entity):
         self.originY = int(element.get('originY'))
         self.size = int(element.get('width'))
 
-    def get_bitmap(self):
+    def bitmap_path(self):
         bitmaps_dir = self.atlas_dir / 'objects' / 'jumpthru'
         typ = 'wood' if self.typ == 'default' else self.typ
-        base_path = bitmaps_dir / typ
-        im = Image.open(base_path.with_suffix('.png'))
-        meta_path = base_path.with_suffix('.meta.yaml')
-        with open(meta_path, 'r') as f:
-            meta_info = yaml.load(f)
-        return im, meta_info
+        return bitmaps_dir / typ
 
     def render(self, im, x=0, y=0):
-        bitmap, meta_info = self.get_bitmap()
+        bitmap, meta_info = self.load_bitmap()
         dest_x = x + self.x + meta_info['X']
         dest_y = y + self.y + meta_info['Y']
         width = meta_info['Width'] // 3
