@@ -11,17 +11,18 @@ class TileMap(object):
 
     TILE_SIZE = 8
 
-    def __init__(self, string, tiles, width, height):
+    def __init__(self, string, tiles, width, height, extend=True):
         self.width = width
         self.height = height
         self.tiles = tiles
+        self.extend = extend
         self.map = np.empty((height, width), dtype=np.unicode_)
         self.map[...] = '0'
         self.fill_map(string)
 
     @staticmethod
-    def from_array(array, tiles, width, height):
-        tile_map = TileMap('', tiles, width, height)
+    def from_array(array, tiles, width, height, extend=True):
+        tile_map = TileMap('', tiles, width, height, extend=extend)
         tile_map.map = array.copy()
         return tile_map
 
@@ -36,7 +37,8 @@ class TileMap(object):
                 row += 1
                 col = 0
             else:
-                self.map[row, col] = char
+                if col < self.width:
+                    self.map[row, col] = char
                 col += 1
 
     def __getitem__(self, coord):
@@ -45,14 +47,21 @@ class TileMap(object):
         If an out-of-bounds index is provided, edge-extend the tilemap.
         """
         row, col = coord
+        extended = False
         if row < 0:
             row = 0
+            extended = True
         elif row >= self.height:
             row = self.height - 1
+            extended = True
         if col < 0:
             col = 0
+            extended = True
         elif col >= self.width:
             col = self.width - 1
+            extended = True
+        if not self.extend and extended:
+            return '0'
         return self.map[row, col]
 
     def check_padding(self, row, col):
