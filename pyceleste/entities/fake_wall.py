@@ -1,6 +1,4 @@
 from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
 
 from .entity import Entity
 from .entity import register_entity
@@ -9,7 +7,7 @@ from .entity import register_entity
 @register_entity('fakeWall')
 class FakeWall(Entity):
 
-    render_mode = 'fill'
+    render_mode = 'hide'
 
     def __init__(self, element, level):
         super().__init__(element, level)
