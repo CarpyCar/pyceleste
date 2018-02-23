@@ -19,7 +19,7 @@ class FakeWall(Entity):
         self.y = int(element.get('y'))
         self.originX = int(element.get('originX'))
         self.originY = int(element.get('originY'))
-        self.play_transition = bool(element.get('playTransitionReveal'))
+        self.play_transition = element.get('playTransitionReveal') == 'True'
 
     def render(self, im, x=0, y=0):
         if self.render_mode == 'hide':

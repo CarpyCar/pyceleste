@@ -12,7 +12,7 @@ class Spring(Entity):
         self.y = int(element.get('y'))
         self.originX = int(element.get('originX'))
         self.originY = int(element.get('originY'))
-        self.can_use = bool(element.get('playerCanUse'))
+        self.can_use = element.get('playerCanUse') == 'True'
 
     def bitmap_path(self):
         return self.atlas_dir / 'objects' / 'spring' / '00'
